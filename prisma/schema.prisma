@@ -1,0 +1,35 @@
+// Schema do Prisma para o sistema de gestão de produtos
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Produto {
+  id          String    @id @default(uuid())
+  nome        String
+  descricao   String?
+  preco       Float
+  quantidade  Int
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+  categoriaId String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("produtos")
+}
+
+model Categoria {
+  id        String    @id @default(uuid())
+  nome      String    @unique
+  produtos  Produto[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("categorias")
+}
